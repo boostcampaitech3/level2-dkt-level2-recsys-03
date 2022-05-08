@@ -8,6 +8,7 @@ import pandas as pd
 import torch
 import tqdm
 from sklearn.preprocessing import LabelEncoder
+from .feature_engineering import get_features
 
 
 class Preprocess:
@@ -22,7 +23,7 @@ class Preprocess:
     def get_test_data(self):
         return self.test_data
 
-    def split_data(self, data, ratio=0.7, shuffle=True, seed=0):
+    def split_data(self, data, ratio=0.9, shuffle=True, seed=0):
         """
         split data into two parts with a given ratio.
         """
@@ -41,12 +42,11 @@ class Preprocess:
         np.save(le_path, encoder.classes_)
 
     def __preprocessing(self, df, is_train=True):
-        cate_cols = ["assessmentItemID", "testId", "KnowledgeTag"]
 
         if not os.path.exists(self.args.asset_dir):
             os.makedirs(self.args.asset_dir)
 
-        for col in cate_cols:
+        for col in self.args.cate_cols:
 
             le = LabelEncoder()
             if is_train:
@@ -57,62 +57,64 @@ class Preprocess:
             else:
                 label_path = os.path.join(self.args.asset_dir, col + "_classes.npy")
                 le.classes_ = np.load(label_path)
+                a = df[col].unique().tolist()
 
                 df[col] = df[col].apply(
                     lambda x: x if str(x) in le.classes_ else "unknown"
                 )
 
             # 모든 컬럼이 범주형이라고 가정
+            # 추후 feature를 embedding할 시에 embedding_layer의 input 크기를 결정할때 사용
+            self.args.num_emb[col] = len(a)
             df[col] = df[col].astype(str)
             test = le.transform(df[col])
             df[col] = test
 
-        def convert_time(s):
-            timestamp = time.mktime(
-                datetime.strptime(s, "%Y-%m-%d %H:%M:%S").timetuple()
-            )
-            return int(timestamp)
+        # def convert_time(s):
+        #     timestamp = time.mktime(
+        #         datetime.strptime(s, "%Y-%m-%d %H:%M:%S").timetuple()
+        #     )
+        #     return int(timestamp)
 
-        df["Timestamp"] = df["Timestamp"].apply(convert_time)
+        # df["Timestamp"] = df["Timestamp"].apply(convert_time)
 
         return df
 
     def __feature_engineering(self, df):
-        # TODO
-        return df
+        df = get_features(df)
+
+        # NaN value가 있는 행 제거
+        df_drop = df.dropna(axis=0)
+
+        return df_drop
 
     def load_data_from_file(self, file_name, is_train=True):
         csv_file_path = os.path.join(self.args.data_dir, file_name)
-        df = pd.read_csv(csv_file_path)  # , nrows=100000)
+        df = pd.read_csv(csv_file_path, parse_dates=["Timestamp"])  # , nrows=100000)
         df = self.__feature_engineering(df)
         df = self.__preprocessing(df, is_train)
 
         # 추후 feature를 embedding할 시에 embedding_layer의 input 크기를 결정할때 사용
 
-        self.args.n_questions = len(
-            np.load(os.path.join(self.args.asset_dir, "assessmentItemID_classes.npy"))
-        )
-        self.args.n_test = len(
-            np.load(os.path.join(self.args.asset_dir, "testId_classes.npy"))
-        )
-        self.args.n_tag = len(
-            np.load(os.path.join(self.args.asset_dir, "KnowledgeTag_classes.npy"))
-        )
+        # self.args.n_questions = len(
+        #     np.load(os.path.join(self.args.asset_dir, "assessmentItemID_classes.npy"))
+        # )
+        # self.args.n_test = len(
+        #     np.load(os.path.join(self.args.asset_dir, "testId_classes.npy"))
+        # )
+        # self.args.n_tag = len(
+        #     np.load(os.path.join(self.args.asset_dir, "KnowledgeTag_classes.npy"))
+        # )
 
-        df = df.sort_values(by=["userID", "Timestamp"], axis=0)
-        columns = ["userID", "assessmentItemID", "testId", "answerCode", "KnowledgeTag"]
+        # df = df.sort_values(by=["userID", "Timestamp"], axis=0)
+
+        # data split에서 섞이지 않기 위해  continuous dataset, categories dataset를 임의로 합침
+        total_cols = self.args.cate_cols + self.args.cont_cols + ["answerCode"]
+        
         group = (
-            df[columns]
+            df[["userID"] + total_cols]
             .groupby("userID")
-            .apply(
-                lambda r: (
-                    r["testId"].values,
-                    r["assessmentItemID"].values,
-                    r["KnowledgeTag"].values,
-                    r["answerCode"].values,
-                )
-            )
-        )
+            .apply(lambda r: list(r[column].values for column in total_cols)))
 
         return group.values
 
@@ -129,32 +131,35 @@ class DKTDataset(torch.utils.data.Dataset):
         self.args = args
 
     def __getitem__(self, index):
-        row = self.data[index]
+        #row = self.data[index]
 
         # 각 data의 sequence length
-        seq_len = len(row[0])
+        #seq_len = len(row[0])
 
-        test, question, tag, correct = row[0], row[1], row[2], row[3]
+        #test, question, tag, correct = row[0], row[1], row[2], row[3]
 
-        cate_cols = [test, question, tag, correct]
+        #cate_cols = [test, question, tag, correct]
+
+        features = list(self.data[index])    
+        seq_len = len(features[0])
 
         # max seq len을 고려하여서 이보다 길면 자르고 아닐 경우 그대로 냅둔다
         if seq_len > self.args.max_seq_len:
-            for i, col in enumerate(cate_cols):
-                cate_cols[i] = col[-self.args.max_seq_len :]
+            for i, col in enumerate(features):
+                features[i] = col[-self.args.max_seq_len :]
             mask = np.ones(self.args.max_seq_len, dtype=np.int16)
         else:
             mask = np.zeros(self.args.max_seq_len, dtype=np.int16)
             mask[-seq_len:] = 1
 
         # mask도 columns 목록에 포함시킴
-        cate_cols.append(mask)
+        features.append(mask)
 
         # np.array -> torch.tensor 형변환
-        for i, col in enumerate(cate_cols):
-            cate_cols[i] = torch.tensor(col)
-
-        return cate_cols
+        for i, col in enumerate(features):
+            features[i] = torch.tensor(col)
+        
+        return features
 
     def __len__(self):
         return len(self.data)

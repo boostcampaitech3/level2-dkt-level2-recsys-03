@@ -84,9 +84,10 @@ def train(train_loader, model, optimizer, scheduler, args):
     total_targets = []
     losses = []
     for step, batch in enumerate(train_loader):
-        input = process_batch(batch, args)
+        input, targets = process_batch(batch, args)
+
         preds = model(input)
-        targets = input[3]  # correct
+        #targets = input[-1]  # answerCode
 
         loss = compute_loss(preds, targets)
         update_params(loss, model, optimizer, scheduler, args)
@@ -98,12 +99,12 @@ def train(train_loader, model, optimizer, scheduler, args):
         preds = preds[:, -1]
         targets = targets[:, -1]
 
-        if args.device == "cuda":
+        if args.gpu == "gpu":
             preds = preds.to("cpu").detach().numpy()
             targets = targets.to("cpu").detach().numpy()
         else:  # cpu
-            preds = preds.detach().numpy()
-            targets = targets.detach().numpy()
+            preds = preds.to("cpu").detach().numpy()
+            targets = targets.to("cpu").detach().numpy()
 
         total_preds.append(preds)
         total_targets.append(targets)
@@ -125,21 +126,21 @@ def validate(valid_loader, model, args):
     total_preds = []
     total_targets = []
     for step, batch in enumerate(valid_loader):
-        input = process_batch(batch, args)
+        input, targets = process_batch(batch, args)
 
         preds = model(input)
-        targets = input[3]  # correct
+        #targets = input[-1]  # answerCode
 
         # predictions
         preds = preds[:, -1]
         targets = targets[:, -1]
 
-        if args.device == "cuda":
+        if args.gpu == "gpu":
             preds = preds.to("cpu").detach().numpy()
             targets = targets.to("cpu").detach().numpy()
         else:  # cpu
-            preds = preds.detach().numpy()
-            targets = targets.detach().numpy()
+            preds = preds.to("cpu").detach().numpy()
+            targets = targets.to("cpu").detach().numpy()
 
         total_preds.append(preds)
         total_targets.append(targets)
@@ -164,17 +165,17 @@ def inference(args, test_data):
     total_preds = []
 
     for step, batch in enumerate(test_loader):
-        input = process_batch(batch, args)
+        input, targets = process_batch(batch, args)
 
         preds = model(input)
 
         # predictions
         preds = preds[:, -1]
 
-        if args.device == "cuda":
+        if args.gpu == "gpu":
             preds = preds.to("cpu").detach().numpy()
         else:  # cpu
-            preds = preds.detach().numpy()
+            preds = preds.to("cpu").detach().numpy()
 
         total_preds += list(preds)
 
@@ -205,36 +206,67 @@ def get_model(args):
 
 # 배치 전처리
 def process_batch(batch, args):
+    """ 
+    dataloader에서 input에 맞춰 전처리를 한번 더 해준다. 
+    (type변경, gpu설정, mask 사용하여 padding 적용)
+    
+    Parameters:
+    batch(dtype=tuple): categorical features + continuous features + answerCode + mask
+        
+    Returns:
+    data(dtype=tuple): categorical features + concatenated continuous features + mask 포함
+                       (categorical features: dtype=int64,
+                        continuous features, mask: dtype=FloatTensor)
+    answerCode(dtype=FloatTensor): Target
+    """
 
-    test, question, tag, correct, mask = batch
+    #test, question, tag, correct, mask = batch
+    data = list(batch[:len(args.cate_cols)])
+    cont_data = list(batch[len(args.cate_cols) : len(args.cate_cols)+len(args.cont_cols)])
+    correct = batch[-2]
+    mask = batch[-1]
 
     # change to float
     mask = mask.type(torch.FloatTensor)
     correct = correct.type(torch.FloatTensor)
 
-    # interaction을 임시적으로 correct를 한칸 우측으로 이동한 것으로 사용
-    interaction = correct + 1  # 패딩을 위해 correct값에 1을 더해준다.
-    interaction = interaction.roll(shifts=1, dims=1)
-    interaction_mask = mask.roll(shifts=1, dims=1)
-    interaction_mask[:, 0] = 0
-    interaction = (interaction * interaction_mask).to(torch.int64)
+    # feature engineering에서 'past_correct'feature와 같아 삭제
+    # # interaction을 임시적으로 correct를 한칸 우측으로 이동한 것으로 사용
+    # interaction = correct + 1  # 패딩을 위해 correct값에 1을 더해준다.
+    # interaction = interaction.roll(shifts=1, dims=1)
+    # interaction_mask = mask.roll(shifts=1, dims=1)
+    # interaction_mask[:, 0] = 0
+    # interaction = (interaction * interaction_mask).to(torch.int64)
 
-    #  test_id, question_id, tag
-    test = ((test + 1) * mask).to(torch.int64)
-    question = ((question + 1) * mask).to(torch.int64)
-    tag = ((tag + 1) * mask).to(torch.int64)
+    # categorical features
+    for i, col in enumerate(data):
+        data[i] = ((col + 1) * mask).to(torch.int64).to(args.device)
+
+    # Concatenate the continuous features
+    concat = (cont_data[0] * mask).view(-1, args.max_seq_len, 1)
+
+    for i in range(1, len(cont_data)):
+        tmp = cont_data[i] * mask
+        concat = torch.cat((concat, tmp.view(-1, args.max_seq_len, 1)), dim=2)
+
+    data.append(concat.type(torch.FloatTensor).to(args.device))    
+    data.append(mask.to(args.device))
+
+    # test = ((test + 1) * mask).to(torch.int64)
+    # question = ((question + 1) * mask).to(torch.int64)
+    # tag = ((tag + 1) * mask).to(torch.int64)
 
     # device memory로 이동
-    test = test.to(args.device)
-    question = question.to(args.device)
+    # test = test.to(args.device)
+    # question = question.to(args.device)
 
-    tag = tag.to(args.device)
+    # tag = tag.to(args.device)
     correct = correct.to(args.device)
-    mask = mask.to(args.device)
+    # mask = mask.to(args.device)
 
-    interaction = interaction.to(args.device)
+    # interaction = interaction.to(args.device)
 
-    return (test, question, tag, correct, mask, interaction)
+    return tuple(data), correct 
 
 
 # loss계산하고 parameter update!
