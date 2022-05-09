@@ -230,14 +230,6 @@ def process_batch(batch, args):
     mask = mask.type(torch.FloatTensor)
     correct = correct.type(torch.FloatTensor)
 
-    # feature engineering에서 'past_correct'feature와 같아 삭제
-    # # interaction을 임시적으로 correct를 한칸 우측으로 이동한 것으로 사용
-    # interaction = correct + 1  # 패딩을 위해 correct값에 1을 더해준다.
-    # interaction = interaction.roll(shifts=1, dims=1)
-    # interaction_mask = mask.roll(shifts=1, dims=1)
-    # interaction_mask[:, 0] = 0
-    # interaction = (interaction * interaction_mask).to(torch.int64)
-
     # categorical features
     for i, col in enumerate(data):
         data[i] = ((col + 1) * mask).to(torch.int64).to(args.device)
@@ -251,21 +243,8 @@ def process_batch(batch, args):
 
     data.append(concat.type(torch.FloatTensor).to(args.device))    
     data.append(mask.to(args.device))
-
-    # test = ((test + 1) * mask).to(torch.int64)
-    # question = ((question + 1) * mask).to(torch.int64)
-    # tag = ((tag + 1) * mask).to(torch.int64)
-
-    # device memory로 이동
-    # test = test.to(args.device)
-    # question = question.to(args.device)
-
-    # tag = tag.to(args.device)
     correct = correct.to(args.device)
-    # mask = mask.to(args.device)
-
-    # interaction = interaction.to(args.device)
-
+    
     return tuple(data), correct 
 
 

@@ -70,14 +70,6 @@ class Preprocess:
             test = le.transform(df[col])
             df[col] = test
 
-        # def convert_time(s):
-        #     timestamp = time.mktime(
-        #         datetime.strptime(s, "%Y-%m-%d %H:%M:%S").timetuple()
-        #     )
-        #     return int(timestamp)
-
-        # df["Timestamp"] = df["Timestamp"].apply(convert_time)
-
         return df
 
     def __feature_engineering(self, df):
@@ -93,20 +85,6 @@ class Preprocess:
         df = pd.read_csv(csv_file_path, parse_dates=["Timestamp"])  # , nrows=100000)
         df = self.__feature_engineering(df)
         df = self.__preprocessing(df, is_train)
-
-        # 추후 feature를 embedding할 시에 embedding_layer의 input 크기를 결정할때 사용
-
-        # self.args.n_questions = len(
-        #     np.load(os.path.join(self.args.asset_dir, "assessmentItemID_classes.npy"))
-        # )
-        # self.args.n_test = len(
-        #     np.load(os.path.join(self.args.asset_dir, "testId_classes.npy"))
-        # )
-        # self.args.n_tag = len(
-        #     np.load(os.path.join(self.args.asset_dir, "KnowledgeTag_classes.npy"))
-        # )
-
-        # df = df.sort_values(by=["userID", "Timestamp"], axis=0)
 
         # data split에서 섞이지 않기 위해  continuous dataset, categories dataset를 임의로 합침
         total_cols = self.args.cate_cols + self.args.cont_cols + ["answerCode"]
@@ -131,15 +109,6 @@ class DKTDataset(torch.utils.data.Dataset):
         self.args = args
 
     def __getitem__(self, index):
-        #row = self.data[index]
-
-        # 각 data의 sequence length
-        #seq_len = len(row[0])
-
-        #test, question, tag, correct = row[0], row[1], row[2], row[3]
-
-        #cate_cols = [test, question, tag, correct]
-
         features = list(self.data[index])    
         seq_len = len(features[0])
 
