@@ -18,16 +18,19 @@ def comb_layers(args):
 
     # embedding combination projection
     cate_proj = nn.Sequential(nn.Linear((len(args.cate_cols) * (args.hidden_dim//3)), args.hidden_dim),
-                              nn.LayerNorm(args.hidden_dim)).to(args.device)
+                              nn.LayerNorm(args.hidden_dim),
+                              ).to(args.device)
 
     # continous features
     cont_proj = nn.Sequential(nn.Linear((len(args.cont_cols)), args.hidden_dim),
-                                          nn.LayerNorm(args.hidden_dim)).to(args.device)    
+                              nn.LayerNorm(args.hidden_dim),
+                              ).to(args.device)    
 
     # concatenate all features
     comb_proj = nn.Sequential(nn.ReLU(),
                               nn.Linear(args.hidden_dim*2, args.hidden_dim),
-                              nn.LayerNorm(args.hidden_dim)).to(args.device)
+                              nn.LayerNorm(args.hidden_dim),
+                              ).to(args.device)
 
     return cate_embedding_layers, cate_proj, cont_proj, comb_proj
 
@@ -109,7 +112,7 @@ class LSTM(nn.Module):
 
         return preds
 
-# 수정중(에러 해결 필요)
+
 class LSTMATTN(nn.Module):
     def __init__(self, args):
         super(LSTMATTN, self).__init__()
@@ -182,7 +185,7 @@ class LSTMATTN(nn.Module):
 
         return preds
 
-# 수정중(에러 해결 필요)
+
 class Bert(nn.Module):
     def __init__(self, args):
         super(Bert, self).__init__()
