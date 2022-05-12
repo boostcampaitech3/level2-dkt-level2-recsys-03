@@ -138,22 +138,25 @@ def get_etc(df):
     tag_mean, tag_sum : KnowledgeTag별 정답 평균, 합
     assess_mean, assess_sum " assessmentItemID별 평균, 합
     get_hour을 실행해야 function 실행 가능"""
-    edu_time_df = df.copy()
-    hour_dict = edu_time_df.groupby(["hour"])["answerCode"].mean().to_dict()
-    edu_time_df["correct_per_hour"] = edu_time_df["hour"].map(hour_dict)
-    correct_per_time = edu_time_df.groupby(["hour"])[["correct_per_hour"]].mean()
+    # edu_time_df = df.copy()
+    # hour_dict = edu_time_df.groupby(["hour"])["answerCode"].mean().to_dict()
+    # edu_time_df["correct_per_hour"] = edu_time_df["hour"].map(hour_dict)
+    # correct_per_time = edu_time_df.groupby(["hour"])[["correct_per_hour"]].mean()
 
-    correct_t = df.groupby(["testId"])["answerCode"].agg(["mean", "sum"])
-    correct_t.columns = ["test_mean", "test_sum"]
-    correct_k = df.groupby(["KnowledgeTag"])["answerCode"].agg(["mean", "sum"])
-    correct_k.columns = ["tag_mean", "tag_sum"]
+    #correct_t = df.groupby(["testId"])["answerCode"].agg(["mean", "sum"])
+    #correct_t.columns = ["test_mean", "test_sum"]
+    #correct_k = df.groupby(["KnowledgeTag"])["answerCode"].agg(["mean", "sum"])
+    #correct_k.columns = ["tag_mean", "tag_sum"]
     correct_a = df.groupby(["assessmentItemID"])["answerCode"].agg(["mean", "sum"])
     correct_a.columns = ["assess_mean", "assess_sum"]
+    correct_u = df.groupby(["userID"])["answerCode"].agg(["mean", "sum"])
+    correct_u.columns = ["user_mean", "user_sum"]
 
-    df = pd.merge(df, correct_t, on=["testId"], how="left")
-    df = pd.merge(df, correct_k, on=["KnowledgeTag"], how="left")
+    #df = pd.merge(df, correct_t, on=["testId"], how="left")
+    #df = pd.merge(df, correct_k, on=["KnowledgeTag"], how="left")
     df = pd.merge(df, correct_a, on=["assessmentItemID"], how="left")
-    df = pd.merge(df, correct_per_time, on=["hour"], how="left")
+    df = pd.merge(df, correct_u, on=["userID"], how="left")
+    # df = pd.merge(df, correct_per_time, on=["hour"], how="left")
 
     return df
 
@@ -162,26 +165,26 @@ def get_features(df):
     #유저별 시퀀스를 고려하기 위해 아래와 같이 정렬
     df.sort_values(by=["userID","Timestamp"], inplace=True)
 
-    df["user_correct_answer"] = get_user_correct_answer(df)
-    df["user_total_answer"] = get_user_total_answer(df)
-    df["user_acc"] = get_user_acc(df)
+    #df["user_correct_answer"] = get_user_correct_answer(df)
+    #df["user_total_answer"] = get_user_total_answer(df)
+    #df["user_acc"] = get_user_acc(df)
 
     df["correct_shift_-2"], df["correct_shift_-1"] = get_future(df)
     df["correct_shift_2"], df["correct_shift_1"] = get_past(df)
 
-    df["time"] = get_time(df)
-    df["future_correct"] = get_future_correct(df)
+    # df["time"] = get_time(df)
+    # df["future_correct"] = get_future_correct(df)
 
-    df["past_content_correct"] = get_past_content_correct(df)
-    df["past_content_count"] = get_past_content_count(df)
-    df["average_content_correct"] = get_average_content_correct(df)
+    # df["past_content_correct"] = get_past_content_correct(df)
+    # df["past_content_count"] = get_past_content_count(df)
+    # df["average_content_correct"] = get_average_content_correct(df)
 
-    df["mean_time"] = get_mean_time(df)
-    df["time_median"] = get_time_median(df)
+    # df["mean_time"] = get_mean_time(df)
+    # df["time_median"] = get_time_median(df)
 
-    df["hour"] = get_hour(df)
-    df["hour_mode"] = get_hour_mode(df)
-    #df["normalized_time"] = get_normalized_time(df)
-    #df["relative_time"] = get_relative_time(df)
+    # df["hour"] = get_hour(df)
+    # df["hour_mode"] = get_hour_mode(df)
+    # df["normalized_time"] = get_normalized_time(df)
+    # df["relative_time"] = get_relative_time(df)
 
     return get_etc(df)

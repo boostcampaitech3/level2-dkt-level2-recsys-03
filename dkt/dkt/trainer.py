@@ -8,7 +8,7 @@ import wandb
 from .criterion import get_criterion
 from .dataloader import get_loaders
 from .metric import get_metric
-from .model import LSTM, LSTMATTN, Bert
+from .model import LSTM, LSTMATTN, GRUATTN, Bert
 from .optimizer import get_optimizer
 from .scheduler import get_scheduler
 
@@ -196,6 +196,8 @@ def get_model(args):
         model = LSTM(args)
     if args.model == "lstmattn":
         model = LSTMATTN(args)
+    if args.model == "gruattn":
+        model = GRUATTN(args)
     if args.model == "bert":
         model = Bert(args)
 
@@ -236,7 +238,6 @@ def process_batch(batch, args):
 
     # Concatenate the continuous features
     concat = (cont_data[0] * mask).view(-1, args.max_seq_len, 1)
-
     for i in range(1, len(cont_data)):
         tmp = cont_data[i] * mask
         concat = torch.cat((concat, tmp.view(-1, args.max_seq_len, 1)), dim=2)
@@ -257,7 +258,6 @@ def compute_loss(preds, targets):
 
     """
     loss = get_criterion(preds, targets)
-
     # 마지막 시퀀드에 대한 값만 loss 계산
     loss = loss[:, -1]
     loss = torch.mean(loss)
