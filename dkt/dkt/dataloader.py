@@ -23,7 +23,7 @@ class Preprocess:
     def get_test_data(self):
         return self.test_data
 
-    def split_data(self, data, ratio=0.9, shuffle=True, seed=0):
+    def split_data(self, data, ratio=0.8, shuffle=True, seed=0):
         """
         split data into two parts with a given ratio.
         """
@@ -77,6 +77,8 @@ class Preprocess:
 
         # NaN value가 있는 행 제거
         df_drop = df.dropna(axis=0)
+        # NaN value가 있는 행 0으로 채움
+        # df_drop = df.fillna(0)
 
         return df_drop
 
@@ -96,8 +98,24 @@ class Preprocess:
 
         return group.values
 
+    def data_augmenation(self, group_data):
+        total_data = list()
+        for data in group_data:
+            seq_len = len(data[0])
+            if seq_len > self.args.max_seq_len:
+                col_len = len(data)
+                for i in range(min(self.args.num_limit, (seq_len-self.args.max_seq_len)//(self.args.max_seq_len//4))):
+                    min_num = (seq_len-self.args.max_seq_len)-(i*(self.args.max_seq_len//4)) 
+                    max_num = min_num + self.args.max_seq_len
+                    total_data.append(list(data[j][min_num : max_num] for j in range(col_len)))
+            else:
+                total_data.append(data)
+
+        return total_data          
+
     def load_train_data(self, file_name):
-        self.train_data = self.load_data_from_file(file_name)
+        tmp_data = self.load_data_from_file(file_name)
+        self.train_data = self.data_augmenation(tmp_data)
 
     def load_test_data(self, file_name):
         self.test_data = self.load_data_from_file(file_name, is_train=False)
