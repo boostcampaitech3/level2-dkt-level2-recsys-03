@@ -8,7 +8,7 @@ import wandb
 from .criterion import get_criterion
 from .dataloader import get_loaders
 from .metric import get_metric
-from .model import LSTM, LSTMATTN, GRUATTN, Bert
+from .model import LSTM, LSTMATTN, GRUATTN, Bert, Saint
 from .optimizer import get_optimizer
 from .scheduler import get_scheduler
 
@@ -200,6 +200,8 @@ def get_model(args):
         model = GRUATTN(args)
     if args.model == "bert":
         model = Bert(args)
+    if args.model == "saint":
+        model = Saint(args)
 
     model.to(args.device)
 
