@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "train.py", line 31, in <module>
+    main(args)
+  File "train.py", line 25, in main
+    trainer.run(args, train_data, valid_data)
+  File "/opt/ml/input/code/dkt/dkt/trainer.py", line 25, in run
+    model = get_model(args)
+  File "/opt/ml/input/code/dkt/dkt/trainer.py", line 202, in get_model
+    model = GRU(args)
+NameError: name 'GRU' is not defined

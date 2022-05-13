@@ -1,0 +1,24 @@
+
+Start Training: Epoch 1
+Traceback (most recent call last):
+  File "train.py", line 31, in <module>
+    main(args)
+  File "train.py", line 25, in main
+    trainer.run(args, train_data, valid_data)
+  File "/opt/ml/input/code/dkt/dkt/trainer.py", line 36, in run
+    train_auc, train_acc, train_loss = train(
+  File "/opt/ml/input/code/dkt/dkt/trainer.py", line 89, in train
+    preds = model(input)
+  File "/opt/conda/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/opt/ml/input/code/dkt/dkt/model.py", line 328, in forward
+    out, hidden = self.GRU(X, hidden)
+  File "/opt/conda/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/opt/conda/lib/python3.8/site-packages/torch/nn/modules/rnn.py", line 737, in forward
+    self.check_forward_args(input, hx, batch_sizes)
+  File "/opt/conda/lib/python3.8/site-packages/torch/nn/modules/rnn.py", line 202, in check_forward_args
+    self.check_hidden_size(hidden, expected_hidden_size)
+  File "/opt/conda/lib/python3.8/site-packages/torch/nn/modules/rnn.py", line 195, in check_hidden_size
+    if hx.size() != expected_hidden_size:
+AttributeError: 'tuple' object has no attribute 'size'

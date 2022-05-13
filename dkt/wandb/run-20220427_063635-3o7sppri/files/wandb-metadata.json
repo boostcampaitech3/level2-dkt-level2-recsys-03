@@ -1,0 +1,23 @@
+{
+    "os": "Linux-4.4.0-59-generic-x86_64-with-glibc2.10",
+    "python": "3.8.5",
+    "heartbeatAt": "2022-04-27T06:36:36.946430",
+    "startedAt": "2022-04-27T06:36:35.211391",
+    "docker": null,
+    "gpu": "Tesla V100-SXM2-32GB",
+    "gpu_count": 1,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [
+        "--model",
+        "gru",
+        "--model_name",
+        "GRU ReLU default"
+    ],
+    "state": "running",
+    "program": "train.py",
+    "codePath": "train.py",
+    "host": "7310e7ec2d72",
+    "username": "root",
+    "executable": "/opt/conda/bin/python"
+}

@@ -1,0 +1,74 @@
+
+Namespace(asset_dir='asset/', batch_size=64, clip_grad=10, data_dir='/opt/ml/input/data/', device='cuda', drop_out=0.2, file_name='train_data.csv', hidden_dim=64, log_steps=50, lr=0.001, max_seq_len=20, model='gruattn', model_dir='models/', model_name='gruattn lr 0.001', n_epochs=20, n_heads=2, n_layers=2, n_questions=9455, n_tag=913, n_test=1538, num_workers=1, optimizer='adam', output_dir='output/', patience=5, scheduler='plateau', seed=42, test_file_name='test_data.csv', total_steps=1480, warmup_steps=148)
+Start Training: Epoch 1
+Training steps: 0 Loss: 0.7187238931655884
+Training steps: 50 Loss: 0.5810996294021606
+TRAIN AUC : 0.7242406147467378 ACC : 0.6636092150170648
+VALID AUC : 0.7414964974346921 ACC : 0.6850746268656717
+saving model ...
+Start Training: Epoch 2
+Training steps: 0 Loss: 0.5823511481285095
+Training steps: 50 Loss: 0.6229356527328491
+TRAIN AUC : 0.7462692826283358 ACC : 0.6885665529010239
+VALID AUC : 0.7406762733062173 ACC : 0.681592039800995
+Start Training: Epoch 3
+Training steps: 0 Loss: 0.49546104669570923
+Training steps: 50 Loss: 0.5435994863510132
+TRAIN AUC : 0.7457760776437747 ACC : 0.6845136518771331
+VALID AUC : 0.7433293561885265 ACC : 0.6810945273631841
+saving model ...
+Start Training: Epoch 4
+Training steps: 0 Loss: 0.5178778171539307
+Training steps: 50 Loss: 0.5346204042434692
+TRAIN AUC : 0.7433755095008056 ACC : 0.6860068259385665
+VALID AUC : 0.7442899209629252 ACC : 0.6870646766169154
+saving model ...
+Start Training: Epoch 5
+Training steps: 0 Loss: 0.6196851134300232
+Training steps: 50 Loss: 0.5627696514129639
+TRAIN AUC : 0.7484240687679082 ACC : 0.6868600682593856
+VALID AUC : 0.7444064582484098 ACC : 0.6855721393034826
+saving model ...
+Start Training: Epoch 6
+Training steps: 0 Loss: 0.5760151147842407
+Training steps: 50 Loss: 0.5277721285820007
+TRAIN AUC : 0.7455713200845651 ACC : 0.6815273037542662
+VALID AUC : 0.7447714431084809 ACC : 0.6860696517412935
+saving model ...
+Start Training: Epoch 7
+Training steps: 0 Loss: 0.6452146172523499
+Training steps: 50 Loss: 0.6326927542686462
+TRAIN AUC : 0.7459690748623174 ACC : 0.6862201365187713
+VALID AUC : 0.7444238148653969 ACC : 0.6875621890547263
+Start Training: Epoch 8
+Training steps: 0 Loss: 0.5301294326782227
+Training steps: 50 Loss: 0.5567488074302673
+TRAIN AUC : 0.7511259386620742 ACC : 0.6921928327645052
+VALID AUC : 0.7448815336505131 ACC : 0.6865671641791045
+saving model ...
+Start Training: Epoch 9
+Training steps: 0 Loss: 0.5803003311157227
+Training steps: 50 Loss: 0.6370716691017151
+TRAIN AUC : 0.7529677538752145 ACC : 0.6928327645051194
+VALID AUC : 0.744401499214985 ACC : 0.6761194029850747
+Start Training: Epoch 10
+Training steps: 0 Loss: 0.5788363218307495
+Training steps: 50 Loss: 0.6206673979759216
+TRAIN AUC : 0.7510103408948982 ACC : 0.695179180887372
+VALID AUC : 0.7431369456916415 ACC : 0.681592039800995
+Start Training: Epoch 11
+Training steps: 0 Loss: 0.578059196472168
+Training steps: 50 Loss: 0.6058813333511353
+TRAIN AUC : 0.7536133874612889 ACC : 0.6938993174061433
+VALID AUC : 0.7442130559448397 ACC : 0.6845771144278607
+Start Training: Epoch 12
+Training steps: 0 Loss: 0.6448593139648438
+Training steps: 50 Loss: 0.5482224225997925
+TRAIN AUC : 0.7541405971518096 ACC : 0.6945392491467577
+VALID AUC : 0.7445542374444712 ACC : 0.6860696517412935
+Start Training: Epoch 13
+Training steps: 0 Loss: 0.6337928175926208
+Training steps: 50 Loss: 0.6065058708190918
+TRAIN AUC : 0.7518858025338521 ACC : 0.6953924914675768
+VALID AUC : 0.7434096925300095 ACC : 0.6791044776119403
+EarlyStopping counter: 5 out of 5

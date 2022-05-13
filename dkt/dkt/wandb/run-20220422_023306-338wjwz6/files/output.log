@@ -1,0 +1,48 @@
+Start Training: Epoch 1
+Training steps: 0 Loss: 0.6808727383613586
+Training steps: 50 Loss: 0.692526638507843
+TRAIN AUC : 0.6666440272511707 ACC : 0.5211177474402731
+VALID AUC : 0.7092563334295386 ACC : 0.5213930348258706
+saving model ...
+Start Training: Epoch 2
+Training steps: 0 Loss: 0.6917222738265991
+Training steps: 50 Loss: 0.6872597932815552
+TRAIN AUC : 0.7198740640728886 ACC : 0.552901023890785
+VALID AUC : 0.7269218981989782 ACC : 0.6134328358208955
+saving model ...
+Start Training: Epoch 3
+Training steps: 0 Loss: 0.673599123954773
+Training steps: 50 Loss: 0.6472758054733276
+TRAIN AUC : 0.7327982226387469 ACC : 0.6674488054607508
+VALID AUC : 0.7327497542798938 ACC : 0.6776119402985075
+saving model ...
+Start Training: Epoch 4
+Training steps: 0 Loss: 0.6549907922744751
+Training steps: 50 Loss: 0.6054182052612305
+TRAIN AUC : 0.7363871321816708 ACC : 0.6828071672354948
+VALID AUC : 0.7344219403507622 ACC : 0.6786069651741293
+saving model ...
+Start Training: Epoch 5
+Training steps: 0 Loss: 0.5852210521697998
+Training steps: 50 Loss: 0.5898536443710327
+TRAIN AUC : 0.7410848868682578 ACC : 0.6849402730375427
+Traceback (most recent call last):
+  File "../train.py", line 31, in <module>
+    main(args)
+  File "../train.py", line 25, in main
+    trainer.run(args, train_data, valid_data)
+  File "/opt/ml/input/code/dkt/dkt/trainer.py", line 41, in run
+    auc, acc = validate(valid_loader, model, args)
+  File "/opt/ml/input/code/dkt/dkt/trainer.py", line 130, in validate
+    preds = model(input)
+  File "/opt/conda/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/opt/ml/input/code/dkt/dkt/model.py", line 79, in forward
+    out = self.fc(out)
+  File "/opt/conda/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/opt/conda/lib/python3.8/site-packages/torch/nn/modules/linear.py", line 93, in forward
+    return F.linear(input, self.weight, self.bias)
+  File "/opt/conda/lib/python3.8/site-packages/torch/nn/functional.py", line 1692, in linear
+    output = input.matmul(weight.t())
+KeyboardInterrupt

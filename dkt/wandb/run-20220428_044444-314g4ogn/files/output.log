@@ -1,0 +1,46 @@
+
+Namespace(asset_dir='asset/', batch_size=64, clip_grad=10, data_dir='/opt/ml/input/data/', device='cuda', drop_out=0.2, file_name='train_data.csv', hidden_dim=64, log_steps=50, lr=0.005, max_seq_len=20, model='gruattn', model_dir='models/', model_name='gruattn lr 0.005 BCEwithLogitsLoss', n_epochs=20, n_heads=2, n_layers=2, n_questions=9455, n_tag=913, n_test=1538, num_workers=1, optimizer='adam', output_dir='output/', patience=5, scheduler='plateau', seed=42, test_file_name='test_data.csv', total_steps=1480, warmup_steps=148)
+Start Training: Epoch 1
+Training steps: 0 Loss: 0.7650535106658936
+Training steps: 50 Loss: 0.6849640607833862
+TRAIN AUC : 0.708190028872092 ACC : 0.6407849829351536
+VALID AUC : 0.7365766403738715 ACC : 0.6766169154228856
+saving model ...
+Start Training: Epoch 2
+Training steps: 0 Loss: 0.6439625024795532
+Training steps: 50 Loss: 0.6866573691368103
+TRAIN AUC : 0.7210755332949831 ACC : 0.6648890784982935
+VALID AUC : 0.7393333670547606 ACC : 0.6875621890547263
+saving model ...
+Start Training: Epoch 3
+Training steps: 0 Loss: 0.6007300615310669
+Training steps: 50 Loss: 0.6548646688461304
+TRAIN AUC : 0.7186360375127517 ACC : 0.6606228668941979
+VALID AUC : 0.7415505508990231 ACC : 0.6850746268656717
+saving model ...
+Start Training: Epoch 4
+Training steps: 0 Loss: 0.6356003284454346
+Training steps: 50 Loss: 0.6588189601898193
+TRAIN AUC : 0.721156123536453 ACC : 0.6601962457337884
+VALID AUC : 0.7014582533689193 ACC : 0.6333333333333333
+Start Training: Epoch 5
+Training steps: 0 Loss: 0.6697709560394287
+Training steps: 50 Loss: 0.6556380987167358
+TRAIN AUC : 0.7280820525349916 ACC : 0.6601962457337884
+VALID AUC : 0.7350552089191191 ACC : 0.6691542288557214
+Start Training: Epoch 6
+Training steps: 0 Loss: 0.6072483062744141
+Training steps: 50 Loss: 0.6411008238792419
+TRAIN AUC : 0.6945794857722669 ACC : 0.6555034129692833
+VALID AUC : 0.7281547139084027 ACC : 0.5208955223880597
+Start Training: Epoch 7
+Training steps: 0 Loss: 0.6934221982955933
+Training steps: 50 Loss: 0.6963422298431396
+TRAIN AUC : 0.49048251127944303 ACC : 0.5211177474402731
+VALID AUC : 0.7089171355432771 ACC : 0.5208955223880597
+Start Training: Epoch 8
+Training steps: 0 Loss: 0.6921639442443848
+Training steps: 50 Loss: 0.7006497383117676
+TRAIN AUC : 0.4899456380531805 ACC : 0.5211177474402731
+VALID AUC : 0.703426493735253 ACC : 0.5208955223880597
+EarlyStopping counter: 5 out of 5

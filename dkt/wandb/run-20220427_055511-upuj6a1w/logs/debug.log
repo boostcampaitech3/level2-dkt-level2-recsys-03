@@ -1,0 +1,27 @@
+2022-04-27 05:55:11,669 INFO    MainThread:97611 [wandb_setup.py:_flush():75] Loading settings from /opt/ml/.config/wandb/settings
+2022-04-27 05:55:11,669 INFO    MainThread:97611 [wandb_setup.py:_flush():75] Loading settings from /opt/ml/input/code/dkt/wandb/settings
+2022-04-27 05:55:11,669 INFO    MainThread:97611 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-04-27 05:55:11,669 INFO    MainThread:97611 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'train.py', 'program': 'train.py'}
+2022-04-27 05:55:11,670 INFO    MainThread:97611 [wandb_init.py:_log_setup():438] Logging user logs to /opt/ml/input/code/dkt/wandb/run-20220427_055511-upuj6a1w/logs/debug.log
+2022-04-27 05:55:11,670 INFO    MainThread:97611 [wandb_init.py:_log_setup():439] Logging internal logs to /opt/ml/input/code/dkt/wandb/run-20220427_055511-upuj6a1w/logs/debug-internal.log
+2022-04-27 05:55:11,670 INFO    MainThread:97611 [wandb_init.py:init():472] calling init triggers
+2022-04-27 05:55:11,670 INFO    MainThread:97611 [wandb_init.py:init():475] wandb.init called with sweep_config: {}
+config: {'seed': 42, 'device': 'cuda', 'data_dir': '/opt/ml/input/data/', 'asset_dir': 'asset/', 'file_name': 'train_data.csv', 'model_dir': 'models/', 'model_name': 'gru lr0.00001 epoch100', 'output_dir': 'output/', 'test_file_name': 'test_data.csv', 'max_seq_len': 20, 'num_workers': 1, 'hidden_dim': 64, 'n_layers': 2, 'n_heads': 2, 'drop_out': 0.2, 'n_epochs': 300, 'batch_size': 64, 'lr': 1e-05, 'clip_grad': 10, 'patience': 5, 'log_steps': 50, 'model': 'gru', 'optimizer': 'adam', 'scheduler': 'plateau', 'n_questions': 9455, 'n_test': 1538, 'n_tag': 913}
+2022-04-27 05:55:11,670 INFO    MainThread:97611 [wandb_init.py:init():525] starting backend
+2022-04-27 05:55:11,670 INFO    MainThread:97611 [backend.py:_multiprocessing_setup():99] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2022-04-27 05:55:11,682 INFO    MainThread:97611 [backend.py:ensure_launched():219] starting backend process...
+2022-04-27 05:55:11,694 INFO    MainThread:97611 [backend.py:ensure_launched():224] started backend process with pid: 97691
+2022-04-27 05:55:11,696 INFO    MainThread:97611 [wandb_init.py:init():534] backend started and connected
+2022-04-27 05:55:11,700 INFO    MainThread:97611 [wandb_init.py:init():598] updated telemetry
+2022-04-27 05:55:11,701 INFO    MainThread:97611 [wandb_init.py:init():629] communicating run to backend with 30 second timeout
+2022-04-27 05:55:12,930 INFO    MainThread:97611 [wandb_run.py:_on_init():1922] communicating current version
+2022-04-27 05:55:12,982 INFO    MainThread:97611 [wandb_run.py:_on_init():1926] got version response upgrade_message: "wandb version 0.12.15 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2022-04-27 05:55:12,982 INFO    MainThread:97611 [wandb_init.py:init():660] starting run threads in backend
+2022-04-27 05:55:13,753 INFO    MainThread:97611 [wandb_run.py:_console_start():1896] atexit reg
+2022-04-27 05:55:13,754 INFO    MainThread:97611 [wandb_run.py:_redirect():1769] redirect: SettingsConsole.REDIRECT
+2022-04-27 05:55:13,754 INFO    MainThread:97611 [wandb_run.py:_redirect():1774] Redirecting console.
+2022-04-27 05:55:13,764 INFO    MainThread:97611 [wandb_run.py:_redirect():1830] Redirects installed.
+2022-04-27 05:55:13,764 INFO    MainThread:97611 [wandb_init.py:init():685] run started, returning control to user process
+2022-04-27 05:55:17,451 INFO    MainThread:97611 [wandb_run.py:_atexit_cleanup():1865] got exitcode: 255
+2022-04-27 05:55:17,453 INFO    MainThread:97611 [wandb_run.py:_restore():1837] restore
