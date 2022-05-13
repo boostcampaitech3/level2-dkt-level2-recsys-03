@@ -83,7 +83,6 @@ def parse_args(mode="train"):
     parser.add_argument(
         "--num_limit", default=10, type=int, help="Limit the number of data augmentation per user")
 
-
     # 모델
     parser.add_argument(
         "--hidden_dim", default=64, type=int, help="hidden dimension size") 
