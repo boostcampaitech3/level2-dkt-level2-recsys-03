@@ -124,10 +124,9 @@ class LSTM(nn.Module):
 
         return preds
 
-
-class LSTMATTN(nn.Module):
+class RNNATTN(nn.Module):
     def __init__(self, args):
-        super(LSTMATTN, self).__init__()
+        super(RNNATTN, self).__init__()
         self.args = args
         self.device = args.device
 
@@ -139,9 +138,15 @@ class LSTMATTN(nn.Module):
         self.cate_embedding_layers, self.cate_proj, self.cont_proj, self.comb_proj = \
             comb_layers(self.args)
 
-        self.lstm = nn.LSTM(
-            self.hidden_dim, self.hidden_dim, self.n_layers, batch_first=True
-        )
+
+        if self.args.model == "lstmattn":
+            self.lstm = nn.LSTM(
+                self.hidden_dim, self.hidden_dim, self.n_layers, batch_first=True
+            )
+        else:
+            self.gru = nn.GRU(
+                self.hidden_dim, self.hidden_dim, self.n_layers, batch_first=True
+            )
 
         self.config = BertConfig(
             3,  # not used
@@ -167,7 +172,11 @@ class LSTMATTN(nn.Module):
         c = torch.zeros(self.n_layers, batch_size, self.hidden_dim)
         c = c.to(self.device)
 
-        return (h, c)
+
+        if self.args.model == "lstmattn":
+            return (h, c)
+        else:
+            return h
 
     def forward(self, input):
         X, batch_size, mask = forward_comb(self.args, 
@@ -178,7 +187,12 @@ class LSTMATTN(nn.Module):
                                            self.comb_proj)
 
         hidden = self.init_hidden(batch_size)
-        out, hidden = self.lstm(X, hidden)
+        
+        if self.args.model == "lstmattn":
+            out, hidden = self.lstm(X, hidden)
+        else:
+            out, hidden = self.gru(X, hidden)
+
         out = out.contiguous().view(batch_size, -1, self.hidden_dim)
 
         extended_attention_mask = mask.unsqueeze(1).unsqueeze(2)
@@ -195,76 +209,6 @@ class LSTMATTN(nn.Module):
         preds = self.reg_layer(sequence_output).view(batch_size, -1)
 
         return preds
-
-
-class GRUATTN(nn.Module):
-    def __init__(self, args):
-        super(GRUATTN, self).__init__()
-        self.args = args
-        self.device = args.device
-
-        self.hidden_dim = self.args.hidden_dim
-        self.n_layers = self.args.n_layers
-        self.n_heads = self.args.n_heads
-        self.drop_out = self.args.drop_out
-
-        self.cate_embedding_layers, self.cate_proj, self.cont_proj, self.comb_proj = \
-            comb_layers(self.args)
-
-        self.lstm = nn.GRU(
-            self.hidden_dim, self.hidden_dim, self.n_layers, batch_first=True
-        )
-
-        self.config = BertConfig(
-            3,  # not used
-            hidden_dim=self.hidden_dim,
-            num_hidden_layers=1,
-            num_attention_heads=self.n_heads,
-            intermediate_size=self.hidden_dim,
-            hidden_dropout_prob=self.drop_out,
-            attention_probs_dropout_prob=self.drop_out,
-        )
-        self.attn = BertEncoder(self.config)
-
-        # Fully connected layer
-        # self.fc = nn.Linear(self.hidden_dim, 1)
-
-        # self.activation = nn.Sigmoid()
-        self.reg_layer = get_reg(self.args)
-
-    def init_hidden(self, batch_size):
-        h = torch.zeros(self.n_layers, batch_size, self.hidden_dim)
-        h = h.to(self.device)
-
-        return h
-
-    def forward(self, input):
-        X, batch_size, mask = forward_comb(self.args, 
-                                           input, 
-                                           self.cate_embedding_layers, 
-                                           self.cate_proj, 
-                                           self.cont_proj, 
-                                           self.comb_proj)
-
-        hidden = self.init_hidden(batch_size)
-        out, hidden = self.lstm(X, hidden)
-        out = out.contiguous().view(batch_size, -1, self.hidden_dim)
-
-        extended_attention_mask = mask.unsqueeze(1).unsqueeze(2)
-        extended_attention_mask = extended_attention_mask.to(dtype=torch.float32)
-        extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
-        head_mask = [None] * self.n_layers
-
-        encoded_layers = self.attn(out, extended_attention_mask, head_mask=head_mask)
-        sequence_output = encoded_layers[-1]
-
-        #out = self.fc(sequence_output)
-
-        #preds = self.activation(out).view(batch_size, -1)
-        preds = self.reg_layer(sequence_output).view(batch_size, -1)
-
-        return preds
-
 
 class Bert(nn.Module):
     def __init__(self, args):

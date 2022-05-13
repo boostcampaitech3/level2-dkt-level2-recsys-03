@@ -8,7 +8,7 @@ import wandb
 from .criterion import get_criterion
 from .dataloader import get_loaders
 from .metric import get_metric
-from .model import LSTM, LSTMATTN, GRUATTN, Bert, Saint
+from .model import LSTM, RNNATTN, Bert, Saint
 from .optimizer import get_optimizer
 from .scheduler import get_scheduler
 
@@ -194,10 +194,8 @@ def get_model(args):
     """
     if args.model == "lstm":
         model = LSTM(args)
-    if args.model == "lstmattn":
-        model = LSTMATTN(args)
-    if args.model == "gruattn":
-        model = GRUATTN(args)
+    if args.model == "lstmattn" or args.model == "gruattn":
+        model = RNNATTN(args)
     if args.model == "bert":
         model = Bert(args)
     if args.model == "saint":
